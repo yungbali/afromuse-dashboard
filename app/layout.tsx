@@ -2,7 +2,8 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
-import type React from "react" // Added import for React
+import type React from "react"
+import { ServiceProvider } from '@/providers/service-provider'
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -19,10 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {children}
-        <Toaster />
+        <ServiceProvider>
+          {children}
+          <Toaster />
+        </ServiceProvider>
       </body>
     </html>
   )
 }
-

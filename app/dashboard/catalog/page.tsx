@@ -8,6 +8,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loader2, RefreshCw, Search } from "lucide-react"
+import { catalogService } from "@/services/api/catalog"
+import type { SearchResults, CatalogItem } from "@/types/catalog"
 
 // Mock data for the catalog
 const mockCatalog = [
@@ -23,6 +25,7 @@ export default function CatalogSyncPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [catalog, setCatalog] = useState(mockCatalog)
   const { toast } = useToast()
+  const [searchResults, setSearchResults] = useState<SearchResults | null>(null)
 
   const handleSync = async () => {
     setSyncing(true)
@@ -34,6 +37,23 @@ export default function CatalogSyncPage() {
       description: "Your catalog has been successfully synced with AudioSalad.",
     })
   }
+
+  const handleSearch = async (searchTerm: string) => {
+    try {
+      const results = await catalogService.searchCatalog({
+        term: searchTerm,
+        page: 1,
+        limit: 10
+      });
+      setSearchResults(results);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to search catalog",
+        variant: "destructive"
+      });
+    }
+  };
 
   const filteredCatalog = catalog.filter(
     (item) =>
@@ -71,7 +91,7 @@ export default function CatalogSyncPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <Button type="submit">
+              <Button type="submit" onClick={() => handleSearch(searchTerm)}>
                 <Search className="h-4 w-4" />
               </Button>
             </div>

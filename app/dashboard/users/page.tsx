@@ -45,7 +45,9 @@ export default function UserManagementPage() {
   const handleUpdateUser = (e: React.FormEvent) => {
     e.preventDefault()
     if (editingUser) {
-      const updatedUsers = users.map((user) => (user.id === editingUser.id ? editingUser : user))
+      const updatedUsers = users.map((user) => 
+        user.id === (editingUser as typeof users[0]).id ? {...editingUser, id: user.id} : user
+      )
       setUsers(updatedUsers)
       setEditingUser(null)
       toast({

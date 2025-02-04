@@ -9,8 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Download, Search } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useFileService } from '@/hooks/use-file-service'
 
-// Mock data for files
+// Mock data for files 
 const mockFiles = [
   { id: "1", name: "Summer_Vibes.mp3", format: "MP3", size: "8.2 MB", artist: "DJ Cool" },
   { id: "2", name: "Acoustic_Session.wav", format: "WAV", size: "24.5 MB", artist: "Jane Doe" },
@@ -24,6 +25,7 @@ export default function FileRetrievalPage() {
   const [formatFilter, setFormatFilter] = useState("all")
   const [downloading, setDownloading] = useState<string | null>(null)
   const { toast } = useToast()
+  const { uploadFile, processFile, fileList } = useFileService()
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,6 +45,23 @@ export default function FileRetrievalPage() {
       title: "File Downloaded",
       description: `File with ID ${fileId} has been downloaded.`,
     })
+  }
+
+  const handleUpload = async (file: File) => {
+    try {
+      const result = await uploadFile(file)
+      await processFile(result.fileId)
+      toast({
+        title: 'Success',
+        description: 'File uploaded and processed successfully'
+      })
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to upload file',
+        variant: 'destructive'
+      })
+    }
   }
 
   const filteredFiles = mockFiles.filter(

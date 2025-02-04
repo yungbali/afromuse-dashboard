@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build: ./gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      - auth-service
+      - file-service
+      - distribution-service
+
+  auth-service:
+    build: ./services/auth
+    environment:
+      - DB_CONNECTION=postgresql://user:pass@db:5432/auth
+      - JWT_SECRET=${JWT_SECRET}
+
+  file-service:
+    build: ./services/file
+    environment:
+      - STORAGE_BUCKET=${STORAGE_BUCKET}
+      - PROCESSING_QUEUE=${PROCESSING_QUEUE}
+
+  distribution-service:
+    build: ./services/distribution
+    environment:
+      - DSP_API_KEYS=${DSP_API_KEYS}
+      - SCHEDULING_CONFIG=${SCHEDULING_CONFIG}
+
+  # Add other services... 
