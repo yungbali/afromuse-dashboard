@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import type { LoginDTO, UserDTO, User, AuthToken } from '@/types/auth';
 
 export class JWTService {
@@ -52,7 +52,8 @@ export class JWTService {
         return res.status(401).json({ error: 'No token provided' });
       }
       try {
-        const decoded = jwt.verify(token, JWTService.secretKey); // Use JWTService.secretKey for consistency
+        const instance = new JWTService(); // Create an instance to access instance properties
+        const decoded = jwt.verify(token, instance.secretKey); // Use instance.secretKey
         (req as any).user = decoded; // Type assertion to avoid TypeScript error
         next();
       } catch (error) {

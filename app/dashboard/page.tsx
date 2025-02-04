@@ -17,10 +17,13 @@ export default function DashboardPage() {
       <h2 className="text-3xl font-bold tracking-tight">Welcome back</h2>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {features.map((feature) => (
-          <Card key={feature.title}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card 
+            key={feature.title}
+            className="transition-all hover:shadow-lg hover:-translate-y-1"
+          >
+            <CardHeader className="group">
+              <feature.icon className="h-8 w-8 text-primary transition-colors group-hover:text-primary/80" />
               <CardTitle className="text-sm font-medium">{feature.title}</CardTitle>
-              <feature.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{feature.count}</div>

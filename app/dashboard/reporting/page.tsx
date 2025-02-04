@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
+import { Skeleton } from '@/components/ui/skeleton'
 
 // Mock data for charts
 const fileIngestionData = [
@@ -27,6 +28,7 @@ const dspDeliveryData = [
 
 export default function ReportingPage() {
   const [reportType, setReportType] = useState("fileIngestion")
+  const [loading, setLoading] = useState(true)
 
   return (
     <div className="space-y-6">
@@ -75,32 +77,40 @@ export default function ReportingPage() {
           <CardTitle>Key Performance Indicators</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Total Files Ingested</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold">1,234</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Successful Deliveries</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold">5,678</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Active Users</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold">42</p>
-              </CardContent>
-            </Card>
-          </div>
+          {loading ? (
+            <div className="grid gap-4 md:grid-cols-3">
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Total Files Ingested</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold">1,234</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Successful Deliveries</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold">5,678</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Active Users</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold">42</p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

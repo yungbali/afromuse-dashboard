@@ -6,7 +6,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import {
+  Column,
+  DataTable,
+  DataTableColumnHeader,
+} from '@/components/ui/data-table'
 import { Download, Search } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useFileService } from '@/hooks/use-file-service'
@@ -25,11 +29,10 @@ export default function FileRetrievalPage() {
   const [formatFilter, setFormatFilter] = useState("all")
   const [downloading, setDownloading] = useState<string | null>(null)
   const { toast } = useToast()
-  const { uploadFile, processFile, fileList } = useFileService()
+  const { uploadFile, processFile } = useFileService()
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would implement the actual search functionality
     toast({
       title: "Search Completed",
       description: `Showing results for "${searchTerm}"`,
@@ -38,8 +41,7 @@ export default function FileRetrievalPage() {
 
   const handleDownload = async (fileId: string) => {
     setDownloading(fileId)
-    // Here you would implement the actual file download
-    await new Promise((resolve) => setTimeout(resolve, 2000)) // Simulating download
+    await new Promise((resolve) => setTimeout(resolve, 2000))
     setDownloading(null)
     toast({
       title: "File Downloaded",
@@ -70,6 +72,35 @@ export default function FileRetrievalPage() {
         file.artist.toLowerCase().includes(searchTerm.toLowerCase())) &&
       (formatFilter === "all" || file.format.toLowerCase() === formatFilter.toLowerCase()),
   )
+
+  const columns = [
+    {
+      accessorKey: 'name',
+      header: ({ column }: { column: any }) => (
+        <DataTableColumnHeader column={column} title="File Name" />
+      ),
+    },
+    {
+      accessorKey: 'artist',
+      header: 'Artist',
+    },
+    {
+      accessorKey: 'format',
+      header: 'Format',
+    },
+    {
+      accessorKey: 'size',
+      header: 'Size',
+    },
+    {
+      id: 'actions',
+      cell: ({ row }: { row: { original: any } }) => (
+        <Button onClick={() => handleDownload(row.original.id)} variant="ghost">
+          <Download className="h-4 w-4" />
+        </Button>
+      ),
+    },
+  ]
 
   return (
     <div className="space-y-6">
@@ -107,39 +138,7 @@ export default function FileRetrievalPage() {
               Search
             </Button>
           </form>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>File Name</TableHead>
-                <TableHead>Artist</TableHead>
-                <TableHead>Format</TableHead>
-                <TableHead>Size</TableHead>
-                <TableHead>Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredFiles.map((file) => (
-                <TableRow key={file.id}>
-                  <TableCell>{file.name}</TableCell>
-                  <TableCell>{file.artist}</TableCell>
-                  <TableCell>{file.format}</TableCell>
-                  <TableCell>{file.size}</TableCell>
-                  <TableCell>
-                    <Button onClick={() => handleDownload(file.id)} disabled={downloading === file.id}>
-                      {downloading === file.id ? (
-                        "Downloading..."
-                      ) : (
-                        <>
-                          <Download className="h-4 w-4 mr-2" />
-                          Download
-                        </>
-                      )}
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <DataTable columns={columns as Column<{ id: string; name: string; format: string; size: string; artist: string; }>[] } data={filteredFiles} />
         </CardContent>
       </Card>
     </div>

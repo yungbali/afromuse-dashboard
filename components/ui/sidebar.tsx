@@ -4,6 +4,9 @@ import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
 import { PanelLeft } from "lucide-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useState } from "react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -18,6 +21,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import {
+  Home,
+  Upload,
+  Calendar,
+  Database,
+  FileAudio,
+  Users,
+  BarChart,
+  Settings,
+  FileCheck,
+} from "lucide-react"
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -734,6 +748,46 @@ const SidebarMenuSubButton = React.forwardRef<
   )
 })
 SidebarMenuSubButton.displayName = "SidebarMenuSubButton"
+
+const navItems = [
+  { name: "Dashboard", href: "/dashboard", icon: Home },
+  { name: "File Ingestion", href: "/dashboard/ingestion", icon: Upload },
+  { name: "DSP Delivery", href: "/dashboard/delivery", icon: Calendar },
+  { name: "Catalog Sync", href: "/dashboard/catalog", icon: Database },
+  { name: "File Retrieval", href: "/dashboard/files", icon: FileAudio },
+  { name: "User Management", href: "/dashboard/users", icon: Users },
+  { name: "Reporting", href: "/dashboard/reporting", icon: BarChart },
+  { name: "DDEX Validation", href: "/dashboard/ddex-validation", icon: FileCheck },
+  { name: "Settings", href: "/dashboard/settings", icon: Settings },
+]
+
+export function Sidebar() {
+  const pathname = usePathname()
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent side="left" className="w-64">
+          <h1 className="mb-6 text-2xl font-bold">Afromuse Dashboard</h1>
+          <nav className="space-y-2">
+            {navItems.map((item) => (
+              <Link key={item.name} href={item.href}>
+                <Button
+                  variant="ghost"
+                  className={cn("w-full justify-start", pathname === item.href && "bg-gray-200")}
+                >
+                  <item.icon className="mr-2 h-4 w-4" />
+                  {item.name}
+                </Button>
+              </Link>
+            ))}
+          </nav>
+        </SheetContent>
+      </Sheet>
+    </>
+  )
+}
 
 export {
   Sidebar,

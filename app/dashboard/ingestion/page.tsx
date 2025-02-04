@@ -9,18 +9,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CheckCircle2, X, Upload } from "lucide-react"
+import { Dropzone } from "@/components/ui/dropzone"
 
 export default function FileIngestionPage() {
   const [files, setFiles] = useState<File[]>([])
   const [metadata, setMetadata] = useState<{ [key: string]: string }>({})
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({})
   const { toast } = useToast()
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFiles(Array.from(e.target.files))
-    }
-  }
 
   const handleMetadataChange = (fileIndex: number, field: string, value: string) => {
     setMetadata((prev) => ({
@@ -82,10 +77,21 @@ export default function FileIngestionPage() {
                 </ul>
               </div>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="file">Audio Files</Label>
-                  <Input id="file" type="file" multiple onChange={handleFileChange} accept=".mp3,.wav,.flac" />
-                </div>
+                <Dropzone
+                  onDrop={(acceptedFiles: File[]) => setFiles(acceptedFiles)}
+                  accept={{ "audio/*": [".mp3", ".wav", ".flac"] }}
+                  maxSize={50 * 1024 * 1024}
+                >
+                  <div className="flex flex-col items-center gap-4">
+                    <Upload className="h-12 w-12 text-muted-foreground" />
+                    <div className="text-center">
+                      <p className="font-medium">Drag files here or click to upload</p>
+                      <p className="text-sm text-muted-foreground">
+                        Max 50MB per file (MP3, WAV, FLAC)
+                      </p>
+                    </div>
+                  </div>
+                </Dropzone>
                 {files.map((file, index) => (
                   <Card key={index}>
                     <CardContent className="pt-6">
