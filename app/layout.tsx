@@ -4,8 +4,12 @@ import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 import type React from "react"
 import { ServiceProvider } from '@/providers/service-provider'
+import { Amplify } from 'aws-amplify'
+import outputs from '@/amplify_outputs.json'
 
 const inter = Inter({ subsets: ["latin"] })
+
+Amplify.configure(outputs)
 
 export const metadata: Metadata = {
   title: "Afromuse Dashboard",

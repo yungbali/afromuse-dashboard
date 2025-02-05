@@ -1,4 +1,4 @@
-import { S3 } from '@aws-sdk/client-s3';
+import { uploadData, downloadData, remove } from 'aws-amplify/storage';
 import type { 
   UploadResult, 
   ProcessingStatus, 
@@ -7,42 +7,52 @@ import type {
   FileMetadata 
 } from '@/types/file';
 
-export class StorageService {
-  private s3Client: S3;
-  private bucket: string;
+export class AmplifyStorageService {
+  async uploadFile(file: File): Promise<UploadResult> {
+    const path = `uploads/${Date.now()}_${file.name}`;
+    
+    try {
+      const uploadResult = await uploadData({
+        path,
+        data: file,
+        options: {
+          contentType: file.type,
+          onProgress: ({ transferredBytes, totalBytes }) => {
+            console.log(`Upload progress: ${Math.round(
+              (transferredBytes / totalBytes) * 100
+            )}%`);
+          }
+        }
+      }).result;
 
-  constructor() {
-    this.s3Client = new S3({
-      region: process.env.AWS_REGION
-    });
-    this.bucket = process.env.AWS_BUCKET_NAME || 'default-bucket';
+      const url = await downloadData({ path }).result.url;
+      
+      const metadata: FileMetadata = {
+        name: file.name,
+        size: file.size,
+        type: file.type
+      };
+
+      return {
+        fileId: path,
+        url: url.toString(),
+        status: 'pending',
+        metadata
+      };
+    } catch (error) {
+      console.error('Upload failed:', error);
+      throw error;
+    }
   }
 
-  async uploadFile(file: Express.Multer.File): Promise<UploadResult> {
-    const fileId = Math.random().toString(36).substring(7);
-    const key = `uploads/${fileId}/${file.originalname}`;
-
-    await this.s3Client.putObject({
-      Bucket: this.bucket,
-      Key: key,
-      Body: file.buffer,
-      ContentType: file.mimetype,
-    });
-
-    const url = `https://${this.bucket}.s3.amazonaws.com/${key}`;
-    
-    const metadata: FileMetadata = {
-      name: file.originalname,
-      size: file.size,
-      type: file.mimetype,
-    };
-
-    return {
-      fileId,
-      url,
-      status: 'pending',
-      metadata
-    };
+  async getFileUrl(fileId: string): Promise<string> {
+    try {
+      const result = await downloadData({ path: fileId }).result;
+      return result.url.toString();
+    } catch (error) {
+      console.error('Download failed:', error);
+      throw error;
+    }
   }
 }
 

@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CheckCircle2, X, Upload } from "lucide-react"
 import { Dropzone } from "@/components/ui/dropzone"
+import { uploadData, downloadData } from 'aws-amplify/storage'
 
 export default function FileIngestionPage() {
   const [files, setFiles] = useState<File[]>([])
@@ -28,6 +29,28 @@ export default function FileIngestionPage() {
     // Implement file validation logic here
     return true
   }
+
+  const handleFileUpload = async (file: File) => {
+    try {
+      const result = await uploadData({
+        path: `uploads/${file.name}`,
+        data: file,
+        options: {
+          contentType: file.type,
+          onProgress: ({ transferredBytes, totalBytes }) => {
+            if (totalBytes) {
+              setUploadProgress(Math.round((transferredBytes / totalBytes) * 100));
+            }
+          }
+        }
+      }).result;
+
+      const url = await downloadData({ path: result.path! }).result.url;
+      // Update UI with new file entry
+    } catch (error) {
+      toast({ title: 'Upload failed', variant: 'destructive' });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
