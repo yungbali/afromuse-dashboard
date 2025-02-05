@@ -7,7 +7,7 @@ import type {
   FileMetadata 
 } from '@/types/file';
 
-export class AmplifyStorageService {
+export class StorageService {
   async uploadFile(file: File): Promise<UploadResult> {
     const path = `uploads/${Date.now()}_${file.name}`;
     
@@ -18,15 +18,18 @@ export class AmplifyStorageService {
         options: {
           contentType: file.type,
           onProgress: ({ transferredBytes, totalBytes }) => {
-            console.log(`Upload progress: ${Math.round(
-              (transferredBytes / totalBytes) * 100
-            )}%`);
+            if (totalBytes) {
+              console.log(`Upload progress: ${Math.round(
+                (transferredBytes / totalBytes) * 100
+              )}%`);
+            }
           }
         }
       }).result;
-
-      const url = await downloadData({ path }).result.url;
       
+      const result = await downloadData({ path });
+      const { url } = result as unknown as { url: string };
+
       const metadata: FileMetadata = {
         name: file.name,
         size: file.size,
@@ -35,7 +38,7 @@ export class AmplifyStorageService {
 
       return {
         fileId: path,
-        url: url.toString(),
+        url: url,
         status: 'pending',
         metadata
       };
@@ -47,8 +50,8 @@ export class AmplifyStorageService {
 
   async getFileUrl(fileId: string): Promise<string> {
     try {
-      const result = await downloadData({ path: fileId }).result;
-      return result.url.toString();
+      const result = await downloadData({ path: fileId });
+      return ((result as unknown as { url: string }).url).toString();
     } catch (error) {
       console.error('Download failed:', error);
       throw error;

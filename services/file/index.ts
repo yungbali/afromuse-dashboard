@@ -28,15 +28,7 @@ export class FileServiceImpl implements FileServiceAPI {
   }
 
   async upload(file: File): Promise<UploadResult> {
-    // Convert File to Multer.File
-    const multerFile: Express.Multer.File = {
-      buffer: await file.arrayBuffer(),
-      originalname: file.name,
-      mimetype: file.type,
-      size: file.size,
-    } as Express.Multer.File;
-
-    return this.storageService.uploadFile(multerFile);
+    return this.storageService.uploadFile(file);
   }
 
   async process(fileId: string, options?: ProcessingOptions): Promise<ProcessingStatus> {
@@ -49,4 +41,7 @@ export class FileServiceImpl implements FileServiceAPI {
 }
 
 export const fileServiceInstance = new FileServiceImpl();
-export default fileService; 
+export default fileService;
+
+export { FileController } from './controllers'
+export { StorageService } from './services' 

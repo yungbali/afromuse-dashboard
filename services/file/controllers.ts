@@ -48,18 +48,20 @@ export class FileController {
       if (!req.file) {
         throw new AppError('No file uploaded', 400);
       }
+      // Convert the Express.Multer.File to a File compatible with StorageService.uploadFile
+      const fileForUpload = new File(
+        [req.file.buffer],
+        req.file.originalname,
+        { type: req.file.mimetype, lastModified: Date.now() }
+      );
 
-      const result = await this.storageService.uploadFile(req.file);
+      const result = await this.storageService.uploadFile(fileForUpload);
       res.status(200).json(result);
     } catch (error) {
       if (error instanceof AppError) {
-        res.status(error.statusCode).json({ 
-          error: error.message 
-        });
+        res.status(error.statusCode).json({ error: error.message });
       } else {
-        res.status(400).json({ 
-          error: 'File upload failed' 
-        });
+        res.status(400).json({ error: 'File upload failed' });
       }
     }
   }
