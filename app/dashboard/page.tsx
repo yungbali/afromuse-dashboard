@@ -14,21 +14,23 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-3xl font-bold tracking-tight">Welcome back</h2>
+      <h2 className="text-3xl font-bold tracking-tight text-blue-800">Welcome back</h2>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {features.map((feature) => (
           <Card 
             key={feature.title}
-            className="transition-all hover:shadow-lg hover:-translate-y-1"
+            className="bg-gradient-to-br from-white to-blue-50 border border-blue-200 transition-all hover:shadow-xl hover:scale-105"
           >
-            <CardHeader className="group">
-              <feature.icon className="h-8 w-8 text-primary transition-colors group-hover:text-primary/80" />
-              <CardTitle className="text-sm font-medium">{feature.title}</CardTitle>
+            <CardHeader className="group flex items-center gap-3 p-4">
+              <div className="bg-blue-100 p-2 rounded">
+                <feature.icon className="h-6 w-6 text-blue-600 transition-colors group-hover:text-blue-800" />
+              </div>
+              <CardTitle className="text-lg font-semibold text-gray-900">{feature.title}</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{feature.count}</div>
+            <CardContent className="p-4">
+              <div className="text-2xl font-bold text-blue-900">{feature.count}</div>
               <Link href={feature.href}>
-                <Button variant="link" className="p-0">
+                <Button variant="link" className="p-0 text-blue-600 hover:text-blue-800">
                   View details
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>

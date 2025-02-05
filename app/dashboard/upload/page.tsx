@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { CheckCircle2, X } from "lucide-react"
+import { CheckCircle2, X, Upload } from "lucide-react"
 
 export default function FileUploadPage() {
   const [files, setFiles] = useState<File[]>([])
@@ -61,16 +61,16 @@ export default function FileUploadPage() {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle>File Upload</CardTitle>
+        <CardHeader className="bg-blue-50 border-b border-blue-100">
+          <CardTitle className="text-blue-900">File Upload</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="mb-4">
             <h3 className="text-lg font-semibold mb-2">Instructions</h3>
-            <ul className="list-disc list-inside text-sm text-gray-600">
-              <li>Accepted formats: MP3, WAV, FLAC</li>
-              <li>Maximum file size: 50MB</li>
-              <li>Use artist name and song title for file naming</li>
+            <ul className="list-disc list-inside text-sm text-blue-600">
+              <li className="text-emerald-700">Accepted formats: MP3, WAV, FLAC</li>
+              <li className="text-amber-700">Maximum file size: 50MB</li>
+              <li className="text-purple-700">Use artist name and song title for file naming</li>
             </ul>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -79,11 +79,11 @@ export default function FileUploadPage() {
               <Input id="file" type="file" multiple onChange={handleFileChange} accept=".mp3,.wav,.flac" />
             </div>
             {files.map((file, index) => (
-              <Card key={index}>
+              <Card key={index} className="border-blue-100 hover:bg-blue-50 transition-colors">
                 <CardContent className="pt-6">
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-semibold">{file.name}</span>
-                    <Button variant="ghost" size="sm" onClick={() => setFiles(files.filter((_, i) => i !== index))}>
+                    <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50" onClick={() => setFiles(files.filter((_, i) => i !== index))}>
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
@@ -117,7 +117,9 @@ export default function FileUploadPage() {
                 </CardContent>
               </Card>
             ))}
-            <Button type="submit">Upload Files</Button>
+            <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white w-full">
+              <Upload className="mr-2 h-4 w-4" /> Process Files
+            </Button>
           </form>
         </CardContent>
       </Card>
