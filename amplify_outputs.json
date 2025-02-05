@@ -116,22 +116,11 @@
         "paths": {
           "uploads/*": {
             "authenticated": [
-              "get",
-              "list",
               "write",
               "delete"
-            ],
-            "guest": [
-              "get",
-              "list"
             ]
           },
-          "processed/*": {
-            "authenticated": [
-              "get",
-              "list"
-            ]
-          }
+          "processed/*": {}
         }
       }
     ]
