@@ -54,6 +54,14 @@ interface SidebarProps {
   setIsOpen: (isOpen: boolean) => void
 }
 
+interface NavItemProps {
+  icon: React.ReactNode;
+  label: string;
+  href: string;
+  active?: boolean;
+  badge?: number;
+}
+
 // Update the component declaration to use the props
 export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const pathname = usePathname()
@@ -137,4 +145,24 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       </button>
     </>
   )
+}
+
+export function NavItem({ icon, label, href, active, badge }: NavItemProps) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "flex items-center gap-5 px-8 py-4 w-full hover:bg-dark-card",
+        active && "bg-dark-card border-l-4 border-primary"
+      )}
+    >
+      <span className="text-white">{icon}</span>
+      <span className="text-white text-lg font-medium">{label}</span>
+      {badge && (
+        <span className="ml-auto bg-primary text-white px-2 py-1 rounded text-sm">
+          {badge}
+        </span>
+      )}
+    </Link>
+  );
 }

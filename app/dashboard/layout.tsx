@@ -1,22 +1,20 @@
 "use client"
-
 import { useState } from "react"
 import Sidebar from "@/components/sidebar"
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+interface DashboardLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="grid min-h-screen" style={{ 
-      gridTemplateColumns: isSidebarOpen ? '16rem 1fr' : '0 1fr',
-      transition: 'grid-template-columns 0.3s ease'
-    }}>
-      <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-      <main className="overflow-y-auto p-4 md:p-8">
+    <div className="flex min-h-screen">
+      <aside className="w-64 bg-sidebar border-r border-gray-200">
+        <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
+      </aside>
+      <main className="flex-1 p-6 animate-fadeIn overflow-auto">
         {children}
       </main>
     </div>

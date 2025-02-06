@@ -19,7 +19,7 @@ export default function DashboardPage() {
         {features.map((feature) => (
           <Card 
             key={feature.title}
-            className="bg-gradient-to-br from-white to-blue-50 border border-blue-200 transition-all hover:shadow-xl hover:scale-105"
+            className="bg-background border-border transition-all hover:shadow-xl hover:scale-105"
           >
             <CardHeader className="group flex items-center gap-3 p-4">
               <div className="bg-blue-100 p-2 rounded">

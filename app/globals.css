@@ -92,3 +92,10 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  /* Define a custom border color named 'border-border' */
+  .border-border {
+    border-color: #292937; /* Replace with your desired color */
+  }
+}
