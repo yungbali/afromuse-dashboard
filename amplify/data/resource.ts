@@ -12,6 +12,58 @@ const schema = a.schema({
       content: a.string(),
     })
     .authorization((allow) => [allow.guest()]),
+
+  // AI Agent for music metadata analysis
+  analyzeMetadata: a.generation({
+    aiModel: a.ai.model('Claude 3.5 Haiku'),
+    systemPrompt: 'You are a music metadata expert. Analyze audio files for BPM, key, genre, and mood.',
+  })
+  .arguments({
+    fileId: a.string(),
+    description: a.string()
+  })
+  .returns(a.json())
+  .authorization(allow => allow.authenticated()),
+
+  // AI Agent for DSP recommendations
+  recommendDSPs: a.generation({
+    aiModel: a.ai.model('Claude 3.5 Haiku'),
+    systemPrompt: 'Recommend DSP platforms based on music metadata and target markets.',
+  })
+  .arguments({
+    metadata: a.json(),
+    targetMarkets: a.string().array()
+  })
+  .returns(a.json())
+  .authorization(allow => allow.authenticated()),
+  
+  // AI Agent for DDEX validation
+  validateDDEX: a.generation({
+    aiModel: a.ai.model('Claude 3.5 Haiku'),
+    systemPrompt: 'Validate DDEX files against industry standards and return structured errors.',
+  })
+  .arguments({
+    fileContent: a.string()
+  })
+  .returns(a.json())
+  .authorization(allow => allow.authenticated()),
+
+  // AI Agent for chat
+  createChat: a.generation({
+    aiModel: a.ai.model('Claude 3.5 Haiku'),
+    systemPrompt: 'You are a music distribution assistant. Help users with platform questions.',
+  })
+  .arguments({
+    message: a.string()
+  })
+  .returns(a.string())
+  .authorization(allow => allow.authenticated()),
+
+  chat: a.conversation({
+    aiModel: a.ai.model('Claude 3.5 Haiku'),
+    systemPrompt: 'You are a helpful assistant',
+  })
+  .authorization((allow) => allow.owner()),
 });
 
 export type Schema = ClientSchema<typeof schema>;

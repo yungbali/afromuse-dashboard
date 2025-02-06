@@ -102,7 +102,78 @@
         }
       },
       "enums": {},
-      "nonModels": {}
+      "nonModels": {},
+      "generations": {
+        "analyzeMetadata": {
+          "name": "analyzeMetadata",
+          "isArray": false,
+          "type": "AWSJSON",
+          "isRequired": false,
+          "arguments": {
+            "fileId": {
+              "name": "fileId",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false
+            },
+            "description": {
+              "name": "description",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false
+            }
+          }
+        },
+        "recommendDSPs": {
+          "name": "recommendDSPs",
+          "isArray": false,
+          "type": "AWSJSON",
+          "isRequired": false,
+          "arguments": {
+            "metadata": {
+              "name": "metadata",
+              "isArray": false,
+              "type": "AWSJSON",
+              "isRequired": false
+            },
+            "targetMarkets": {
+              "name": "targetMarkets",
+              "isArray": true,
+              "type": "String",
+              "isRequired": false,
+              "isArrayNullable": true
+            }
+          }
+        },
+        "validateDDEX": {
+          "name": "validateDDEX",
+          "isArray": false,
+          "type": "AWSJSON",
+          "isRequired": false,
+          "arguments": {
+            "fileContent": {
+              "name": "fileContent",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false
+            }
+          }
+        },
+        "createChat": {
+          "name": "createChat",
+          "isArray": false,
+          "type": "String",
+          "isRequired": false,
+          "arguments": {
+            "message": {
+              "name": "message",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false
+            }
+          }
+        }
+      }
     }
   },
   "storage": {

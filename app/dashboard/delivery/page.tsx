@@ -12,6 +12,16 @@ import { CalendarIcon } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
+import { useAIGeneration } from "@/lib/ai-client"
+
+interface Release {
+  id: number
+  title: string
+  artist: string
+  status: string
+  genre?: string
+  bpm?: number
+}
 
 // Mock data for releases
 const mockReleases = [
@@ -32,6 +42,7 @@ export default function DSPDeliveryPage() {
   const [selectedDSP, setSelectedDSP] = useState("")
   const [deliveryDate, setDeliveryDate] = useState<Date>()
   const { toast } = useToast()
+  const [{ data: recommendations }, getRecommendations] = useAIGeneration("recommendDSPs")
 
   const handleReleaseToggle = (releaseId: number) => {
     setSelectedReleases((prev) =>
@@ -47,6 +58,26 @@ export default function DSPDeliveryPage() {
       description: `Scheduled ${selectedReleases.length} releases for ${selectedDSP} on ${deliveryDate?.toDateString()}`,
     })
   }
+
+  const handleRecommend = async (release: Release) => {
+    await getRecommendations({
+      metadata: {
+        genre: release.genre,
+        bpm: release.bpm,
+        targetMarkets: ["North America", "Europe"]
+      }
+    });
+  };
+
+  const handleSelectRelease = (release: Release) => {
+    getRecommendations({
+      metadata: {
+        genre: release.genre,
+        bpm: release.bpm,
+        targetMarkets: ["North America", "Europe"]
+      }
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -125,6 +156,16 @@ export default function DSPDeliveryPage() {
           </form>
         </CardContent>
       </Card>
+      {recommendations && (
+        <div className="mt-4 p-4 border rounded-lg">
+          <h3 className="font-bold">AI Recommendations</h3>
+          <ul className="list-disc pl-5">
+            {Array.isArray(recommendations) && recommendations.map((platform: string) => (
+              <li key={platform}>{platform}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   )
 }

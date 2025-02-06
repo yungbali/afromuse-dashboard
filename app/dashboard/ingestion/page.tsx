@@ -11,12 +11,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CheckCircle2, X, Upload } from "lucide-react"
 import { Dropzone } from "@/components/ui/dropzone"
 import { uploadData, downloadData } from 'aws-amplify/storage'
+import { useAIGeneration } from "@/lib/ai-client"
+import { Loader } from "@/components/ui/loader"
+
+// Define a custom interface for files
+interface FileWithStatus extends File {
+  status?: string; // Add status property
+  id?: string;     // Add id property
+}
+
+// Add type for AI analysis response
+interface AIAnalysis {
+  genre?: string;
+  bpm?: number;
+  mood?: string;
+}
 
 export default function FileIngestionPage() {
-  const [files, setFiles] = useState<File[]>([])
+  const [files, setFiles] = useState<FileWithStatus[]>([])
   const [metadata, setMetadata] = useState<{ [key: string]: string }>({})
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({})
   const { toast } = useToast()
+
+  const [{ data: analysis, isLoading }, analyzeMetadata] = useAIGeneration("analyzeMetadata")
 
   const handleMetadataChange = (fileIndex: number, field: string, value: string) => {
     setMetadata((prev) => ({
@@ -53,6 +70,22 @@ export default function FileIngestionPage() {
       // Update UI with new file entry
     } catch (error) {
       toast({ title: 'Upload failed', variant: 'destructive' });
+    }
+  };
+  const handleAnalyze = async (fileId: string) => {
+    await analyzeMetadata({
+      fileId,
+      description: "Analyze music metadata for distribution"
+    });
+    
+    if(analysis) {
+      const aiData = analysis as AIAnalysis;
+      setMetadata(prev => ({
+        ...prev,
+        genre: aiData.genre || '',
+        bpm: aiData.bpm?.toString() || '',
+        mood: aiData.mood || ''
+      }));
     }
   };
 
@@ -105,7 +138,7 @@ export default function FileIngestionPage() {
               </div>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <Dropzone
-                  onDrop={(acceptedFiles: File[]) => setFiles(acceptedFiles)}
+                  onDrop={(acceptedFiles: File[]) => setFiles(acceptedFiles as FileWithStatus[])}
                   accept={{ "audio/*": [".mp3", ".wav", ".flac"] }}
                   maxSize={50 * 1024 * 1024}
                 >
@@ -155,6 +188,11 @@ export default function FileIngestionPage() {
                           </div>
                         </div>
                       )}
+                      {file.status === 'processed' && (
+                        <Button onClick={() => handleAnalyze(file.id!)}>
+                          {isLoading ? <Loader /> : 'AI Metadata Analysis'}
+                        </Button>
+                      )}
                     </CardContent>
                   </Card>
                 ))}
@@ -183,6 +221,5 @@ export default function FileIngestionPage() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
-
