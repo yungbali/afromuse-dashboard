@@ -1,4 +1,5 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
+import { generateClient } from "aws-amplify/data";
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -64,6 +65,15 @@ const schema = a.schema({
     systemPrompt: 'You are a helpful assistant',
   })
   .authorization((allow) => allow.owner()),
+
+  CatalogItem: a
+    .model({
+      title: a.string(),
+      artist: a.string(),
+      status: a.string(),
+      lastSync: a.datetime()
+    })
+    .authorization((allow) => [allow.authenticated()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -85,13 +95,7 @@ Actions or Pages Router? Review how to generate Data clients for those use
 cases: https://docs.amplify.aws/gen2/build-a-backend/data/connect-to-API/
 =========================================================================*/
 
-/*
-"use client"
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/amplify/data/resource";
-
 const client = generateClient<Schema>() // use this Data client for CRUDL requests
-*/
 
 /*== STEP 3 ===============================================================
 Fetch records from the database and use them in your frontend component.
