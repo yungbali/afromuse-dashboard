@@ -2,27 +2,33 @@
 
 import { useState, useEffect } from "react"
 import { useToast } from "@/components/ui/use-toast"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Loader2, RefreshCw, Search } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { client } from "@/lib/data-client"
 import type { Schema } from "@/amplify/data/resource"
 
+interface CatalogItemPlain {
+  id: string | null;
+  title: string | null;
+  artist: string | null;
+  status: string | null;
+  lastSync: string | null;
+  metadata: any;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export default function CatalogPage() {
   const { toast } = useToast()
-  const [catalogItems, setCatalogItems] = useState<
-    Schema["CatalogItem"][]
-  >([])
+  const [catalogItems, setCatalogItems] = useState<CatalogItemPlain[]>([])
   const [loading, setLoading] = useState(true)
 
   const fetchCatalog = async () => {
     try {
       setLoading(true)
       const { data } = await client.models.CatalogItem.list()
-      setCatalogItems(data as unknown as Schema["CatalogItem"][])
+      setCatalogItems(data as unknown as CatalogItemPlain[])
     } catch (error) {
       toast({
         title: "Error",
@@ -65,7 +71,9 @@ export default function CatalogPage() {
                     <TableCell>{item.title}</TableCell>
                     <TableCell>{item.artist}</TableCell>
                     <TableCell>{item.status}</TableCell>
-                    <TableCell>{new Date(item.lastSync).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      {item.lastSync ? new Date(item.lastSync).toLocaleDateString() : 'Never'}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

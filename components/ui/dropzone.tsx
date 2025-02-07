@@ -2,12 +2,13 @@ import React, { useState, DragEvent, ChangeEvent } from "react";
 
 interface DropzoneProps {
   onDrop: (acceptedFiles: File[]) => void;
+  onFileRead: (content: string) => void;
   accept?: { [key: string]: string[] };
   maxSize?: number;
   children?: React.ReactNode;
 }
 
-export function Dropzone({ onDrop, accept, maxSize, children }: DropzoneProps) {
+export function Dropzone({ onDrop, onFileRead, accept, maxSize, children }: DropzoneProps) {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -30,11 +31,17 @@ export function Dropzone({ onDrop, accept, maxSize, children }: DropzoneProps) {
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-      ? Array.from(e.target.files).filter((file) => !maxSize || file.size <= maxSize)
-      : [];
-    onDrop(files);
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const content = reader.result as string;
+      onFileRead(content);
+    };
+    reader.readAsText(file);
   };
+
+  const acceptedTypes = accept ? Object.keys(accept).join(",") : undefined;
 
   return (
     <div
@@ -52,7 +59,7 @@ export function Dropzone({ onDrop, accept, maxSize, children }: DropzoneProps) {
         multiple
         className="hidden"
         onChange={handleChange}
-        accept={accept ? Object.keys(accept).join(",") : undefined}
+        accept={acceptedTypes}
       />
       {children}
     </div>

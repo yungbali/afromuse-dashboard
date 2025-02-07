@@ -47,7 +47,7 @@ const schema = a.schema({
     fileContent: a.string()
   })
   .returns(a.json())
-  .authorization(allow => allow.authenticated()),
+  .authorization((allow) => allow.authenticated()),
 
   // AI Agent for chat
   createChat: a.generation({
@@ -58,7 +58,7 @@ const schema = a.schema({
     message: a.string()
   })
   .returns(a.string())
-  .authorization(allow => allow.authenticated()),
+  .authorization((allow) => allow.authenticated()),
 
   chat: a.conversation({
     aiModel: a.ai.model('Claude 3.5 Haiku'),
@@ -68,10 +68,12 @@ const schema = a.schema({
 
   CatalogItem: a
     .model({
+      id: a.id(),
       title: a.string(),
       artist: a.string(),
       status: a.string(),
-      lastSync: a.datetime()
+      lastSync: a.datetime(),
+      metadata: a.json(),
     })
     .authorization((allow) => [allow.authenticated()]),
 });
@@ -97,13 +99,5 @@ cases: https://docs.amplify.aws/gen2/build-a-backend/data/connect-to-API/
 
 const client = generateClient<Schema>() // use this Data client for CRUDL requests
 
-/*== STEP 3 ===============================================================
-Fetch records from the database and use them in your frontend component.
-(THIS SNIPPET WILL ONLY WORK IN THE FRONTEND CODE FILE.)
-=========================================================================*/
+export { client };
 
-/* For example, in a React component, you can use this snippet in your
-  function's RETURN statement */
-// const { data: todos } = await client.models.Todo.list()
-
-// return <ul>{todos.map(todo => <li key={todo.id}>{todo.content}</li>)}</ul>
